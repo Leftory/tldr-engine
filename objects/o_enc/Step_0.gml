@@ -40,12 +40,12 @@ if battle_state == "menu" {
 		}
 		
 		// cap the selection
-		if bt_selection[selection] < 0 bt_selection[selection]=4
-		if bt_selection[selection] > 4 bt_selection[selection]=0
+		if bt_selection[selection] < 0 bt_selection[selection]=5
+		if bt_selection[selection] > 5 bt_selection[selection]=0
 		
 		// press the buttons
 		if InputPressed(INPUT_VERB.SELECT) && buffer == 0 {
-			if bt_selection[selection] == 4 {
+			if bt_selection[selection] == 5 {
 				// set the party sprite to defend
 				party_get_inst(global.party_names[selection]).sprite_index = enc_getparty_sprite(selection, "defend")
 				party_get_inst(global.party_names[selection]).image_index = 0
@@ -59,7 +59,7 @@ if battle_state == "menu" {
 				
 				audio_play(snd_ui_select)
 			}
-			else if bt_selection[selection] == 2 {
+			else if bt_selection[selection] == 3 {
 				if array_length(items) > 0 {
 					state ++
 					buffer = 1
@@ -76,8 +76,8 @@ if battle_state == "menu" {
 				buffer = 1
 				dialogue_autoskip = true
 				if (bt_selection[selection] == 0 
-					|| bt_selection[selection] == 3 
-					|| (bt_selection[selection] == 1 && can_act[selection])) 
+					|| bt_selection[selection] == 4 
+					|| (bt_selection[selection] == 1)) 
 				{
 					updateglowing_enemy()
 				}
@@ -153,12 +153,12 @@ if battle_state == "menu" {
 			if char_state[selection] == CHAR_STATE.ITEM
 				array_pop(items_using)
 			// if i was using magic, return the tp i spent
-			if char_state[selection] == CHAR_STATE.POWER && !can_act[selection] && tp_upon_spell[selection] != -1 {
+			if char_state[selection] == CHAR_STATE.POWER && tp_upon_spell[selection] != -1 {
 				tp = tp_upon_spell[selection]
 				array_set(tp_upon_spell, selection, -1)
 			}
 			// if i was acting and used tp, return the tp i spent
-			if char_state[selection] == CHAR_STATE.ACT && can_act[selection] && tp_upon_spell[selection] != -1 {
+			if char_state[selection] == CHAR_STATE.ACT && tp_upon_spell[selection] != -1 {
 				tp = tp_upon_spell[selection]
 				array_set(tp_upon_spell, selection, -1)
 			}
@@ -175,12 +175,11 @@ if battle_state == "menu" {
 	}
 	else if state == 1 // enemy selector
         && (bt_selection[selection] == 0
-			|| bt_selection[selection] == 3 
-			|| (bt_selection[selection] == 1 && can_act[selection])
+			|| bt_selection[selection] == 4 
+			|| (bt_selection[selection] == 1)
 		) 
-        || (bt_selection[selection] == 2 && state == 3) 
-		|| (!can_act[selection] 
-			&& bt_selection[selection] == 1 
+        || (bt_selection[selection] == 3 && state == 3) 
+		|| (bt_selection[selection] == 2 
 			&& spells[actselection[selection]].use_type == 2 
 			&& state == 3
         )
@@ -227,9 +226,9 @@ if battle_state == "menu" {
 			    encounter_data.enemies[i].actor_id.flashing = false
 			}
 			
-			if bt_selection[selection] == 2
+			if bt_selection[selection] == 3
 				state = 1
-			if bt_selection[selection] == 1 && !can_act[selection]
+			if bt_selection[selection] == 2
 				state = 1
 		}
 		
@@ -264,13 +263,13 @@ if battle_state == "menu" {
 				
 				audio_play(snd_ui_select)
 			}
-			else if bt_selection[selection] == 1 && can_act[selection] { // act, enemy selected. act selection incoming
+			else if bt_selection[selection] == 1 { // act, enemy selected. act selection incoming
 				state ++ // advance to the next depth of the act menu
 				buffer = 1
 				
 				audio_play(snd_ui_select)
 			}
-			else if bt_selection[selection] == 1 && !can_act[selection] { // power, spell selected
+			else if bt_selection[selection] == 2 { // power, spell selected
 				party_get_inst(global.party_names[selection]).sprite_index = enc_getparty_sprite(selection, "spellready")
 				party_get_inst(global.party_names[selection]).image_speed = 1
 				
@@ -291,7 +290,7 @@ if battle_state == "menu" {
 					encounter_data.enemies[i].actor_id.flashing = false
 				}
 			}	
-			else if bt_selection[selection] == 3 { // spare, enemy selected
+			else if bt_selection[selection] == 4 { // spare, enemy selected
 				char_state[selection] = CHAR_STATE.SPARE
 				selection ++
 				state = 0
@@ -306,7 +305,7 @@ if battle_state == "menu" {
 					encounter_data.enemies[i].actor_id.flashing = false
 				}
 			}
-			else if bt_selection[selection] == 2 { // items, item selected
+			else if bt_selection[selection] == 3 { // items, item selected
 				party_get_inst(global.party_names[selection]).sprite_index = enc_getparty_sprite(selection, "itemready")
 				party_get_inst(global.party_names[selection]).image_speed = 1
 				char_state[selection] = CHAR_STATE.ITEM
@@ -327,8 +326,8 @@ if battle_state == "menu" {
 			}
 		}
 	}
-	else if !can_act[selection] // power menu
-		&& bt_selection[selection] == 1 
+	else if  // power menu
+		bt_selection[selection] == 2 
 		&& spells[actselection[selection]].use_type == 2 
 		&& state == 4
 	{
@@ -374,7 +373,7 @@ if battle_state == "menu" {
 			    encounter_data.enemies[i].actor_id.flashing = false
 			}
 			
-			if bt_selection[selection] == 1 && !can_act[selection] 
+			if bt_selection[selection] == 2
 				state = 1
 		}
 		
@@ -410,7 +409,7 @@ if battle_state == "menu" {
 		}
 	}
 	
-	if state == 2 && bt_selection[selection] == 1 && can_act[selection] { // act selector
+	if state == 2 && bt_selection[selection] == 1 { // act selector
 		var acts = __act_sort()
 		
 		if InputPressed(INPUT_VERB.CANCEL) && buffer == 0 {
@@ -548,7 +547,7 @@ if battle_state == "menu" {
 			}
 		}
 	}
-	if state == 1 && bt_selection[selection] == 2 { // item selector
+	if state == 1 && bt_selection[selection] == 3 { // item selector
 		if InputPressed(INPUT_VERB.CANCEL) && buffer == 0 {
 			state --
 			buffer=1
@@ -623,7 +622,7 @@ if battle_state == "menu" {
 			}
 		}
 	}
-	if state == 1 && bt_selection[selection] == 1 && !can_act[selection] { // spell selector
+	if state == 1 && bt_selection[selection] == 2 { // spell selector
 		if InputPressed(INPUT_VERB.CANCEL) && buffer == 0 {
 			state --; 
 			buffer = 1
@@ -708,7 +707,7 @@ if battle_state == "menu" {
 			}
 		}
 	}
-	if state == 2 && (bt_selection[selection] == 2 || (!can_act[selection] && bt_selection[selection] == 1 && spells[actselection[selection]].use_type == ITEM_USE.INDIVIDUAL)) { // item/spell target chooser
+	if state == 2 && (bt_selection[selection] == 3 || (bt_selection[selection] == 2 && spells[actselection[selection]].use_type == ITEM_USE.INDIVIDUAL)) { // item/spell target chooser
 		var delta = false
 		
 		if InputPressed(INPUT_VERB.UP){
@@ -738,7 +737,7 @@ if battle_state == "menu" {
 			}
 		}
 		if InputPressed(INPUT_VERB.SELECT) && buffer == 0 {
-			if bt_selection[selection] == 1 && spells[actselection[selection]].use_type == ITEM_USE.INDIVIDUAL {
+			if bt_selection[selection] == 2 && spells[actselection[selection]].use_type == ITEM_USE.INDIVIDUAL {
 				party_get_inst(global.party_names[selection]).sprite_index = enc_getparty_sprite(selection, "spellready")
 				party_get_inst(global.party_names[selection]).image_speed = 1
 				char_state[selection] = CHAR_STATE.POWER

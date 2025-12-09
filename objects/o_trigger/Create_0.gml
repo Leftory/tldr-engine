@@ -5,3 +5,5 @@ controlled_activation = true // if true, make sure that the player is in control
 trigger_code = function(){}
 trigger_exit_code = function(){}
 trigger_step_code = function(){}
+
+interacted = 0

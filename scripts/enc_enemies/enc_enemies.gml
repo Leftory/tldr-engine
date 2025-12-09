@@ -6,6 +6,7 @@ function enemy() constructor {
 		var_struct: {
 			s_hurt: spr_e_virovirokun_hurt,
 			s_spared: spr_e_virovirokun_spare,
+            s_unspare: spr_e_virovirokun_hurt,
             carrying_money: 10
 		},
 	}
@@ -20,7 +21,9 @@ function enemy() constructor {
 	mercy =	0
 	tired =	false
     can_spare = true
-	
+    
+    unspare = 0
+    
 	// acts
 	acts = [
 		{
@@ -106,10 +109,13 @@ function enemy_virovirokun() : enemy() constructor{
 					inst.speed = 1
 					inst = afterimage(.04, o)
 					inst.speed = 2
-                    
-                    var a = animate(.5, 1, 4, anime_curve.linear, o, "flash")
-                        a._add(0, 6, anime_curve.linear)
-                        a._start()
+					
+					var a = create_anime(0.5)
+					.add(1, 4, "linear")
+					.add(0, 6, "linear")
+					.start(function(v, o) {
+						o.flash = v
+					}, o)
 				}, user)
 				
 				cutscene_dialogue(loc("enemy_virovirokun_act_takecare_msg"))
@@ -140,9 +146,12 @@ function enemy_virovirokun() : enemy() constructor{
 						inst = afterimage(.04, o)
 						inst.speed = 2
 						
-                        var a = animate(.5, 1, 4, anime_curve.linear, o, "flash")
-                            a._add(0, 6, anime_curve.linear)
-                            a._start()
+						var a = create_anime(.5)
+						.add(1, 4, "linear")
+						.add(0, 6, "linear")
+						.start(function(v, o) {
+							o.flash = v
+						}, o)
 					}
 					for (var i = 0; i < array_length(o_enc.encounter_data.enemies); ++i) {
 						if enc_enemy_isfighting(i) {
@@ -264,17 +273,17 @@ function enemy_killercar() : enemy() constructor{
             var inst = instance_create(o_dummy, __enemy.x - 50, __enemy.y - __enemy.myheight/2, __enemy.depth - 50, {
                 sprite_index: spr_ex_almond_milk
             })
-            animate(2.5, 1, 10, "linear", inst, "image_xscale")
-            animate(2.5, 1, 10, "linear", inst, "image_yscale")
-            animate(0, 1, 10, "linear", inst, "image_alpha")
+            do_animate(2.5, 1, 10, "linear", inst, "image_xscale")
+            do_animate(2.5, 1, 10, "linear", inst, "image_yscale")
+            do_animate(0, 1, 10, "linear", inst, "image_alpha")
             
             my_inst_almond = inst
         }), [actor_id])
         cutscene_sleep(15)
         
         cutscene_func(method(self, function(__enemy) {
-            animate(my_inst_almond.x, __enemy.x, 10, "cubic_in", my_inst_almond, "x")
-            animate(1, 0, 10, "cubic_in", my_inst_almond, "image_alpha")
+            do_animate(my_inst_almond.x, __enemy.x, 10, "cubic_in", my_inst_almond, "x")
+            do_animate(1, 0, 10, "cubic_in", my_inst_almond, "image_alpha")
         }), [actor_id])
         cutscene_sleep(10)
         
@@ -310,4 +319,189 @@ function enemy_killercar() : enemy() constructor{
     })
     
     recruit = new enemy_recruit_killercar()
+}
+
+function enemy_dummy() : enemy() constructor{
+	name = "Dummy"
+	obj = o_actor_e_dummy
+	
+	// stats
+	hp =		100
+	max_hp =	100
+	attack =	0
+	defense =	1
+	status_effect = ""
+    freezable = true
+    
+    mercy = 0
+	
+	// acts
+	acts = [
+		{
+			name: loc("enc_act_check"),
+			party: [],
+			desc: "Useless analysis",
+			exec: function() {
+				encounter_scene_dialogue("* DUMMY - 0 ATK 1 DEF{br}{resetx}* ... It's a dummy.")
+			}
+		},
+		{
+			name: "\"ACT\"",
+			party: [],
+			desc: "... It's an ACT!",
+			tp_cost: 0,
+			exec: function(slot, user) {
+				cutscene_create()
+				cutscene_set_variable(o_enc, "waiting", true)
+				
+				cutscene_func(enc_sparepercent_enemy, [slot, 100])
+				
+				cutscene_dialogue("* ... You \"ACT\"ed!{br}{resetx}* It was highly effective!")
+				
+				cutscene_set_variable(o_enc, "waiting", false)
+				cutscene_play()
+			}
+		},
+		{
+			name: "ACT with Gary",
+			party: ["gary"],
+			desc: "Not available",
+			tp_cost: 0,
+			exec: function(slot, user) {
+				cutscene_create()
+				cutscene_set_variable(o_enc, "waiting", true)
+				
+				cutscene_func(function(user) {
+					for (var i = 0; i < array_length(o_enc.encounter_data.enemies); ++i) {
+						if enc_enemy_isfighting(i) {
+							if is_instanceof(o_enc.encounter_data.enemies[i], enemy_virovirokun)
+								enc_sparepercent_enemy(i, 100)
+							else 
+								enc_sparepercent_enemy(i, 50)
+						}
+					}
+				}, user)
+				cutscene_dialogue(loc("enemy_virovirokun_act_takecarex_msg"))
+				
+				cutscene_set_variable(o_enc, "waiting", false)
+				cutscene_play()
+			}
+		},
+	]
+	
+	
+	// recruit
+    //recruit = new enemy_recruit_virovirokun()
+		
+	// text
+	dialogue = function(slot) {
+		if self.mercy >= 100 
+			return array_shuffle([
+                "..."
+            ])[0]
+		return array_shuffle([
+            "..."
+        ])[0]
+	}
+}
+
+function enemy_fig() : enemy() constructor{
+	name = "Fig"
+	obj = o_actor_e_fig
+	
+	// stats
+	hp =		100
+	max_hp =	100
+	attack =	1
+	defense =	1
+	status_effect = ""
+    freezable = true
+    
+    mercy = 100
+    
+    turn_object = o_turn_fig_crowdattack
+	
+	// acts
+	acts = [
+		{
+			name: loc("enc_act_check"),
+			party: [],
+			desc: "Useless analysis",
+			exec: function() {
+				encounter_scene_dialogue("* FIG - 1 ATK 1 DEF{br}{resetx}* They blend into crowds very easily. They're very insecure about this.")
+			}
+		},
+		{
+			name: "Compliment",
+			party: [],
+			desc: "Gives MERCY",
+			tp_cost: 0,
+			exec: function(slot, user) {
+				cutscene_create()
+				cutscene_set_variable(o_enc, "waiting", true)
+				cutscene_dialogue(array_shuffle([
+                "* You told Fig they stand out from the crowd.",
+                "* You told Fig they're very unique.",
+                "* You told Fig they're irreplaceable."
+            ])[0])
+                
+                cutscene_func(function(slot, user){
+                    if o_enc.encounter_data.enemies[slot].unspare < 100
+                    {
+                        enc_sparepercent_enemy(slot, 100)
+                        cutscene_create()
+                        cutscene_dialogue("* They were flattered!")
+                        cutscene_set_variable(o_enc, "waiting", false)
+                        cutscene_play()
+                    }
+                    else {
+                    	cutscene_create()
+                        o_enc.encounter_data.enemies[slot].attack ++
+                        cutscene_dialogue("* ... but they found it insincere!{br}{resetx}Their ATTACK went up!")
+                        cutscene_set_variable(o_enc, "waiting", false)
+                        cutscene_play()
+                    }
+                }, [slot, user])
+				cutscene_play()
+			}
+		},
+        {
+			name: "Mock",
+			party: [],
+			desc: "Becomes UNSPAREABLE",
+			tp_cost: 0,
+			exec: function(slot, user) {
+				cutscene_create()
+				cutscene_set_variable(o_enc, "waiting", true)
+				
+				cutscene_dialogue(array_shuffle([
+                "* You told Fig you can't tell them apart from the crowd.",
+                "* You told Fig they're the opposite of unique.",
+                "* You told Fig they're replaceable."
+            ])[0])
+                
+                cutscene_func(enc_unsparepercent_enemy, [slot, 100])
+                
+                cutscene_dialogue("* They were angered!")
+				
+				cutscene_set_variable(o_enc, "waiting", false)
+				cutscene_play()
+			}
+		},
+	]
+	
+	
+	// recruit
+    //recruit = new enemy_recruit_virovirokun()
+		
+	// text
+	dialogue = function(slot) {
+		if self.mercy >= 100 
+			return array_shuffle([
+                "Hey, I can be spared."
+            ])[0]
+		return array_shuffle([
+            "Hey, I'm Fig."
+        ])[0]
+	}
 }

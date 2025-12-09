@@ -7,6 +7,9 @@ function party_init() {
     party_m_initialize("ralsei", party_m_ralsei)
     party_m_initialize("noelle", party_m_noelle)
     
+    party_m_initialize("fred", party_m_fred)
+    party_m_initialize("gary", party_m_gary)
+    
 	global.party_names = []
 }
 function party_m_initialize(_name, _constructor) {
@@ -393,5 +396,152 @@ function party_m_noelle() : party_m() constructor {
 		var_struct: {
 			name: "noelle"
 		},
+	}
+}
+function party_m_fred() : party_m() constructor {
+	name = "Fred"
+    action_letter = "F"
+	
+	// colors
+	color = c_blue
+	darkcolor = #00137F
+	iconcolor = c_blue
+	
+	// stats
+	lv =	save_get("chapter")
+	desc =	"Commander\nKeeps things where they belong."
+	power_stats = [
+		["Guts", 1, spr_ui_menu_icon_fire],
+		"???",
+		"???"
+	]
+	
+	max_hp =	party_m_calculate_hp(92, lv)
+    hp =		max_hp
+	attack =	0
+	defense =	0
+	magic =		0
+	element_resistance = {
+	}
+	
+	// inventory
+    weapon = undefined
+    armor1 = undefined
+    armor2 = undefined
+	spells = [
+        new item_s_blaybuster()
+	]
+	
+	// sprites
+	s_state =		""
+	s_substate =	""
+	s_icon =		spr_ui_fred_icon
+	s_icon_ow =		spr_ui_fred_head
+	s_icon_weapon = spr_ui_menu_weapon_sword
+	s_battle_intro =	1 // 1 for attack, 0 for full intro	
+	
+	battle_sprites = { // [sprite, whether stop at the end (or change to what sprite), (image speed)]
+		act: [spr_bfred_act, true],
+		actready: spr_bfred_actready,
+		actend: [spr_bfred_actend, "idle", 1],
+		attack: [spr_bfred_attack, true],
+		attackready: spr_bfred_attackready,
+		defeat: spr_bfred_defeat,
+		defend: [spr_bfred_defend, true],
+		hurt: spr_bfred_hurt,
+		idle: spr_bfred_idle,
+		intro: [spr_bfred_intro, true],
+		introb: spr_bfred_introb,
+		itemuse: [spr_bfred_item, "idle", 1],
+		itemready: spr_bfred_itemready,
+        spell: [spr_bsusie_spell, "idle", 1],
+		spellready: spr_bsusie_spellready,
+		victory: [spr_bfred_victory, true],
+		spare: [spr_bfred_act, "idle", 1],
+		attack_eff: spr_bfred_attackeff,
+        
+        blaybuster: [spr_bsusie_rudebuster, 14]
+	}
+		
+	// system
+	obj = {
+		obj: o_actor_fred,
+		var_struct: {
+			name: "fred"
+		}
+	}
+}
+function party_m_gary() : party_m() constructor {
+	name = "Gary"
+    action_letter = "G"
+	
+	// colors
+	color = #008A0B
+	darkcolor = #05620F
+	iconcolor = c_green
+	
+	// stats
+	lv =	save_get("chapter")
+	desc =	"Warrior\nFights for the good side."
+	power_stats = [
+		["Guts", 2, spr_ui_menu_icon_fire],
+		"???",
+		"???"
+	]
+	
+	max_hp =	party_m_calculate_hp(77, lv)
+    hp =		max_hp
+	attack =	0
+	defense =	0
+	magic =		0
+	element_resistance = {
+	}
+	
+	// inventory
+    weapon = undefined
+    armor1 = undefined
+    armor2 = undefined
+	spells = [
+        new item_s_healprayer(),
+        new item_s_pacify()
+	]
+	
+	// sprites
+	s_state =		""
+	s_substate =	""
+	s_icon =		spr_ui_gary_icon
+	s_icon_ow =		spr_ui_gary_head
+	s_icon_weapon = spr_ui_menu_weapon_sword
+	s_battle_intro =	1 // 1 for attack, 0 for full intro	
+	
+	battle_sprites = { // [sprite, whether stop at the end (or change to what sprite), (image speed)]
+		act: [spr_bkris_act, true],
+		actready: spr_bkris_actready,
+		actend: [spr_bkris_actend, "idle", 1],
+		attack: [spr_bkris_attack, true],
+		attackready: spr_bkris_attackready,
+		defeat: spr_bkris_defeat,
+		defend: [spr_bkris_defend, true],
+		hurt: spr_bkris_hurt,
+		idle: spr_bkris_idle,
+		intro: [spr_bkris_intro, true],
+		introb: spr_bkris_introb,
+		itemuse: [spr_bkris_item, "idle", 1],
+		itemready: spr_bkris_itemready,
+        spell: [spr_bsusie_spell, "idle", 1],
+		spellready: spr_bsusie_spellready,
+		victory: [spr_bkris_victory, true],
+		spare: [spr_bkris_act, "idle", 1],
+		attack_eff: spr_bkris_attackeff,
+        
+        blaybuster: [spr_bsusie_rudebuster, 14]
+	}
+		
+	// system
+	obj = {
+		obj: o_actor_gary,
+		var_struct: {
+			name: "gary"
+		}
 	}
 }

@@ -32,7 +32,7 @@ global.states = {}
 global.room_name = ""
 
 global.player_moveable_global = true
-global.border_mode = BORDER_MODE.OFF
+global.border_mode = BORDER_MODE.SIMPLE
 
 { // emmiters
 	emitter_sfx = audio_emitter_create();

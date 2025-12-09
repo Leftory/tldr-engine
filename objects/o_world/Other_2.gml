@@ -53,7 +53,7 @@ global.save_recording = []
 global.save = {}
 #region create the save entries
     // base player data
-    save_entry("NAME", "PLAYER")
+    save_entry("NAME", "Fred")
     save_entry("ROOM", room_test_main, undefined, function() { return room })
     save_entry("ROOM_NAME", "", function(_raw_data){ global.room_name = _raw_data }, function(){ return global.room_name })
     
@@ -69,12 +69,12 @@ global.save = {}
     save_entry("COMPLETE_TIME", 0)
     
     // light world data
-    save_entry("LW_NAME", "Kris")
+    save_entry("LW_NAME", "Fred")
     save_entry("LW_LV", 1)
     save_entry("LW_HP", 20)
     save_entry("LW_MAXHP", 20)
-    save_entry("LW_MONEY", 0)
-    save_entry("LW_SINCE_CHAPTER", 0)
+    save_entry("LW_MONEY", 9)
+    save_entry("LW_SINCE_CHAPTER", 1)
     
     save_entry("LW_WEAPON", 
         undefined, 
@@ -131,7 +131,7 @@ global.save = {}
 
 party_init()
 global.party_names = [   // <-- if you wish to change the default team members, change them here
-    "kris", "susie", "ralsei"
+    "fred"
 ]
 party_apply_equipment()
 

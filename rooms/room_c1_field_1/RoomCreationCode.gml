@@ -1,0 +1,1 @@
+global.party_names = ["fred"]

@@ -79,3 +79,25 @@ function enc_set_virovirokun() : enc_set() constructor {
 	]
 	flavor = "* Virovirokun floated in!"
 }
+
+function enc_set_dummy() : enc_set() constructor {
+	debug_name	=	"dummy"
+	enemies = [
+		new enemy_dummy()
+	]
+	enemies_pos = [
+		[0, 0, true]
+	]
+	flavor = "* It's a dummy!"
+}
+
+function enc_set_1fig() : enc_set() constructor {
+	debug_name	=	"1fig"
+	enemies = [
+		new enemy_fig()
+	]
+	enemies_pos = [
+		[0, 0, true]
+	]
+	flavor = "* Fig blocks the way!"
+}

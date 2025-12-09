@@ -1,6 +1,12 @@
 ///@desc returns the party leader at the moment
 function get_leader(){
-	return party_get_inst(global.party_names[0])
+	if global.party_names[0] == "fred"
+    {
+        return o_actor_fred
+    }
+        else {
+            return party_get_inst(global.party_names[0])
+        }
 }
 
 ///@desc creates an actor standing in for the party leader

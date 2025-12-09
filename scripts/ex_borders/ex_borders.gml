@@ -35,3 +35,8 @@ function ex_border_titan() : border() constructor {
         draw_sprite_stretched_ext(spr_ex_border_titan_eyes, 1, 0, 0, _width, _height, c_white, _eyes_glow * _alpha)
     })
 }
+
+function border_fora() : border() constructor {
+    _name = "FORA"
+    _sprite = spr_border_fora
+}

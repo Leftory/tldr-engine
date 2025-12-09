@@ -285,4 +285,23 @@ function item_w_freezering() : item_weapon() constructor {
 	}
     
     item_localize("item_w_freezering")
-}  
+}
+
+// My Stuff
+function item_w_lightsword() : item_weapon() constructor {
+	name = ["Light Sword"]
+	desc = ["A sword with a blade made of pure light.", "--"]
+    lw_counterpart = item_w_lw_pencil
+	
+	stats = {
+        attack: 1
+    }
+	icon = spr_ui_menu_icon_sword
+	weapon_whitelist = ["fred"]
+	
+	reactions = {
+		gary: "Thanks, but I don't do swords."
+	}
+    
+    //item_localize("item_w_lightsword")
+}

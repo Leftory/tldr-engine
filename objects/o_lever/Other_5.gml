@@ -1,0 +1,1 @@
+if lever state_add("lever",id)

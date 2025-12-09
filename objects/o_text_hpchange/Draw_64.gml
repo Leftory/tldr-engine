@@ -89,6 +89,9 @@ else {
                 case "frozen":
                     spr = spr_ui_damage_frozen
                     break
+                case "unspareable":
+                    spr = spr_ui_damage_unspareable
+                    break
 			}
 			
 			draw_sprite_ext(spr, 0,

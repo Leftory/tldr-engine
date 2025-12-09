@@ -9,8 +9,8 @@ for (var i = 0; i < array_length(global.party_names); ++i) {
 
 var inst = instance_create(o_enc,,,,{
 	encounter_data: encounter_data, 
-	save_pos,
-    save_follow,
+	save_pos: save_pos,
+    save_follow: save_follow,
 })
 
 // do the initial flavor text

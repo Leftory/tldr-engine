@@ -103,9 +103,7 @@ surface_set_target(surf) {
 				draw_set_color(c_white)
 				
 				// image indexes
-				var btns = ["fight", "power", "item", "spare", "defend"]
-				if can_act[i]
-					btns[1] = "act"
+				var btns = ["fight", "act", "power", "item", "spare", "defend"]
 				
 				gpu_set_colorwriteenable(1, 1, 1, 0)
 				for (var j = 0; j < 3; ++j) {
@@ -121,12 +119,12 @@ surface_set_target(surf) {
 				for (var j = 0; j < array_length(btns); ++j) {
                     var __spr = asset_get_index(string(loc("enc_ui_spr_buttons"), btns[j]))
                     
-					draw_sprite_ext(spr_pixel, 0, 2 + 193 - array_length(btns)*35 + j*35, 1, 31, 25, 0, c_black, 1)
-					draw_sprite_ext(__spr, (bt_selection[selection] == j && i == selection ? 1 : 0), 2 + 193 - array_length(btns)*35 + j*35, 1, 1, 1, 0, c_white, 1)
+					draw_sprite_ext(spr_pixel, 0, 2 + 193+19 - array_length(btns)*35 + j*35, 1, 31, 25, 0, c_black, 1)
+					draw_sprite_ext(__spr, (bt_selection[selection] == j && i == selection ? 1 : 0), 2 + 193+19 - array_length(btns)*35 + j*35, 1, 1, 1, 0, c_white, 1)
 					
 					if i == selection && __bt_highlight(j, global.party_names[i]) && bt_selection[selection] != j {
 						gpu_set_fog(true, c_white, 0, 1)
-						draw_sprite_ext(__spr, 1, 2 + 193 - array_length(btns)*35 + j*35, 1, 1, 1, 0, c_white, .5 + sine(8, .3))
+						draw_sprite_ext(__spr, 1, 2 + 193+19 - array_length(btns)*35 + j*35, 1, 1, 1, 0, c_white, .5 + sine(8, .3))
 						gpu_set_fog(false, 0, 0, 0)
 					}
 				}
@@ -144,7 +142,7 @@ surface_set_target(surf) {
 		draw_set_font(loc_font("main"))
 		
 		// enemy selector
-		if state == 1 && (bt_selection[selection] == 0 || bt_selection[selection] == 3 || (bt_selection[selection] == 1 && can_act[selection])) || (bt_selection[selection] == 2 && state == 3) || (!can_act[selection] && bt_selection[selection] == 1 && spells[actselection[selection]].use_type == 2 && state == 3) {
+		if state == 1 && (bt_selection[selection] == 0 || bt_selection[selection] == 4 || (bt_selection[selection] == 1)) || (bt_selection[selection] == 3 && state == 3) || ( bt_selection[selection] == 2 && spells[actselection[selection]].use_type == 2 && state == 3) {
 			draw_text_transformed(424, 364, loc("enc_ui_label_hp"), (global.loc_lang == "en" ? 2 : 1), 1, 0)
 			draw_text_transformed(524, 364, loc("enc_ui_label_mercy"), (global.loc_lang == "en" ? 2 : 1), 1, 0)
 			
@@ -215,7 +213,7 @@ surface_set_target(surf) {
 		}
 		
 		// party action enemy selector
-		if !can_act[selection] && bt_selection[selection] == 1 && spells[actselection[selection]].use_type == 2 && state == 4 { 
+		if bt_selection[selection] == 2 && spells[actselection[selection]].use_type == 2 && state == 4 { 
 			var longestx = 0
 			
 			for (var i = 0; i < array_length(encounter_data.enemies); ++i) {
@@ -257,10 +255,10 @@ surface_set_target(surf) {
 					draw_sprite_ext(spr_ui_enc_sparestar, 0, 60 + string_width(encounter_data.enemies[i].name)*2 + 42, 385 + 30*i, 1, 1, 0, c_white, 1)
 				
 				var mercypercent = encounter_data.enemies[i].mercy
-				var desc = item_get_desc(spells[actselection[selection]], ITEM_DESC_TYPE.PARTY_ACTION)
                 
+				var desc = item_get_desc(spells[actselection[selection]], 2)
 				if is_instanceof(spells[actselection[selection]], item_s_defaultaction) // change the description if it's the default action
-                    && encounter_data.enemies[i].acts_special_desc != desc 
+                && encounter_data.enemies[i].acts_special_desc != desc 
 					desc = encounter_data.enemies[i].acts_special_desc
 				
 				draw_set_color(merge_color(party_getdata(global.party_names[selection], "color"), c_white, .5))
@@ -283,7 +281,7 @@ surface_set_target(surf) {
 		}
 		
 		// act selector
-		if state == 2 && (bt_selection[selection] == 1) && can_act[selection] {
+		if state == 2 && (bt_selection[selection] == 1) {
 			var acts = __act_sort()
 			for (var i = 0; i < array_length(acts); ++i) {
 				var cando = true
@@ -349,7 +347,7 @@ surface_set_target(surf) {
 		}
 		
 		// item selector
-		if state == 1 && (bt_selection[selection] == 2) {
+		if state == 1 && (bt_selection[selection] == 3) {
 			var items = __item_sort()
 			for (var i = itempage[selection]*6; i < min(array_length(items), 6 + itempage[selection]*6); ++i) {
 				var txt = item_get_name(items[i])
@@ -359,9 +357,9 @@ surface_set_target(surf) {
 			    draw_text_transformed(30 + (i % 2 == 1 ? 230 : 0), 375 + 30 * floor(i/2) - 90 * itempage[selection], txt, 2, 2, 0)
 			}
 			// draw the item description if applicable
-			if is_string(item_get_desc(items[itemselection[selection]], ITEM_DESC_TYPE.SHORTENED)){
+			if is_string(item_get_desc(items[itemselection[selection]], 1)){
 				draw_set_color(c_gray)
-				draw_text_ext_transformed(500, 375, item_get_desc(items[itemselection[selection]], ITEM_DESC_TYPE.SHORTENED), 15, 70, 2, 2, 0)
+				draw_text_ext_transformed(500, 375, item_get_desc(items[itemselection[selection]], 1), 15, 70, 2, 2, 0)
 				draw_set_color(c_white)
 			}
 			
@@ -375,7 +373,7 @@ surface_set_target(surf) {
 		}
 			
 		// spell selector
-		if state == 1 && (bt_selection[selection] == 1) && !can_act[selection] {
+		if state == 1 && (bt_selection[selection] == 2) {
 			for (var i = spellpage[selection] * 6; i < min(array_length(spells), 6 + spellpage[selection]*6); ++i) {
 				var txt = item_get_name(spells[i])
 				
@@ -383,7 +381,6 @@ surface_set_target(surf) {
 					draw_sprite_ext(spr_uisoul, 0, 10 + (i%2 == 1 ? 230 : 0), 385 + 30 * floor(i/2) - 90*spellpage[selection], 1, 1, 0, c_red, 1)
 				
                 draw_set_color(c_white)
-                
 				if tp < spells[i].tp_cost 
 					draw_set_color(c_gray)
 				else if struct_exists(spells[i], "color") {
@@ -396,9 +393,9 @@ surface_set_target(surf) {
 			    draw_text_transformed(30 + (i % 2 == 1 ? 230 : 0), 375 + 30 * floor(i/2) - 90*spellpage[selection], txt, 2, 2, 0)
 				draw_set_color(c_white)
 			}
-			if is_string(item_get_desc(spells[actselection[selection]], ITEM_DESC_TYPE.SHORTENED)) {
+			if is_string(item_get_desc(spells[actselection[selection]], 1)) {
 				draw_set_color(c_gray)
-				draw_text_ext_transformed(500, 375, item_get_desc(spells[actselection[selection]], ITEM_DESC_TYPE.SHORTENED), 15, 70, 2, 2, 0)
+				draw_text_ext_transformed(500, 375, item_get_desc(spells[actselection[selection]], 1), 15, 70, 2, 2, 0)
 				draw_set_color(c_white)
 			}
 			
@@ -418,7 +415,7 @@ surface_set_target(surf) {
 		}
 		
 		// item use (party)
-		if state == 2 && (bt_selection[selection] == 2 || (!can_act[selection] && bt_selection[selection] == 1 && spells[actselection[selection]].use_type == 0)) {
+		if state == 2 && (x == 3 || (bt_selection[selection] == 2 && spells[actselection[selection]].use_type == 0)) {
 			for (var i = 0; i < array_length(global.party_names); ++i) {
 			    draw_text_transformed(80, 375 + 30*i,party_getname(global.party_names[i]), 2, 2, 0)
 				

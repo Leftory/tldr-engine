@@ -1,0 +1,1 @@
+y = ystart + sine(16,2)

@@ -108,6 +108,46 @@ function enc_sparepercent_enemy(target, percent, sfx = snd_mercyadd) {
 	}
 }
 
+function enc_unsparepercent_enemy(target, percent, sfx = snd_ominous) {
+	o_enc.encounter_data.enemies[target].unspare += percent
+	if o_enc.encounter_data.enemies[target].unspare >= 100
+    {
+        percent = 100
+        o_enc.encounter_data.enemies[target].can_spare = false
+    }
+	
+    o_enc.encounter_data.enemies[target].mercy -= percent
+    if o_enc.encounter_data.enemies[target].mercy < 0 o_enc.encounter_data.enemies[target].mercy = 0 
+    
+	o_enc.encounter_data.enemies[target].unspare = clamp(o_enc.encounter_data.enemies[target].unspare, 0, 100)
+	
+	var o = o_enc.encounter_data.enemies[target].actor_id
+	if percent < 100{
+        var txt = $"+{percent}%"
+    }
+        else{
+            var txt = "unspareable"
+        }
+	
+	instance_create(o_text_hpchange, o.x, o.y - o.myheight/2, o.depth - 100, {draw: txt, mode: 4})
+	
+	if sfx == snd_ominous {
+		var _pitch = 0.8
+		
+        if percent < 99
+            _pitch = 1
+        if percent <= 50
+            _pitch = 1.2
+        if percent <= 25
+            _pitch = 1.4
+			
+        audio_play(sfx,, 1, _pitch, 1)
+	}
+	if o_enc.encounter_data.enemies[target].unspare >= 100 {
+		o.sprite_index = o.s_unspare
+	}
+}
+
 ///@arg slot
 function enc_sparepercent_enemy_from_inst(target, instance, variable, sfx = snd_mercyadd){
 	var percent = variable_instance_get(instance, variable)

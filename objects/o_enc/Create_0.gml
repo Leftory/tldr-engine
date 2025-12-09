@@ -145,7 +145,7 @@ __item_sort = function(at_point = array_length(items_using)) {
 	return items
 }
 __bt_highlight = function(button_index, party_name) {
-	if button_index == 1 { // pacify
+	if button_index == 2 { // pacify
 		var __tgt_spell = undefined
 		var __can_spellspare = false
 		
@@ -173,7 +173,7 @@ __bt_highlight = function(button_index, party_name) {
 		
 		return __can_spellspare
 	}
-	else if button_index == 3 { // spare
+	else if button_index == 4 { // spare
 		var __can_spare = false
 		
 		// check whether we can spare the enemy
