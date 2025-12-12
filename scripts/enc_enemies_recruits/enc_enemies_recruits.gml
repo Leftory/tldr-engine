@@ -54,3 +54,38 @@ function enemy_recruit_killercar(data = {progress: 0}) : enemy_recruit(data) con
     like         = "HANGING WITH THE COOL KIDS"
     dislike      = "YOU"
 }
+
+function enemy_recruit_fig(data = {progress: 0}) : enemy_recruit(data) constructor {
+    need         = 5
+    
+    sprite       = spr_fig
+    bgcolor      = #00AEF0
+    chapter      = 1
+    
+    level        = 1
+    attack       = 1
+    defense      = 1
+    
+    name         = "Fig"
+    desc         = "An insecure crowder."
+    element      = "ACTION:PEOPLE"
+    like         = "Standing out"
+    dislike      = "Fitting in"
+}
+function enemy_recruit_bookworm(data = {progress: 0}) : enemy_recruit(data) constructor {
+    need         = 3
+    
+    sprite       = spr_bookworm
+    bgcolor      = c_orange
+    chapter      = 1
+    
+    level        = 1
+    attack       = 1
+    defense      = 2
+    
+    name         = "Bookworm"
+    desc         = "A nerdy worm that loves studying and is very academically successful."
+    element      = "BOOK:BUG"
+    like         = "The Norm"
+    dislike      = "Cheaters"
+}

@@ -212,3 +212,20 @@ function item_a_shadowmantle() : item_armor() constructor {
     
     item_localize("item_a_shadowmantle")
 }
+
+function item_a_blueribbon() : item_armor() constructor {
+    name = ["Blue Ribbon"]
+	desc = ["It's soft and cute.", "--", "Defensive charm"]
+	
+	stats = {
+		defense: 1
+	}
+	
+	reactions = {
+		fred: {
+            fred: "It's nice.",
+            gary: "It matches with your outfit!"
+        },
+		gary: "It's fluffy!"
+	}
+}

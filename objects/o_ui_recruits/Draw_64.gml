@@ -7,7 +7,7 @@ var __total_pages = ceil(array_length(recruit_array) / page_max)
 draw_set_font(loc_font("main"))
 
 if view == 0 {
-    ui_dialoguebox_create(30, 10, 620 - 30 - 1, 440 - 10 - 1, WORLD_TYPE.LIGHT)
+    ui_dialoguebox_create(30, 10, 620 - 30 - 1, 440 - 10 - 1, WORLD_TYPE.DARK)
     draw_text_transformed(80, 30, loc("recruits_title"), 2, 2, 0)
     
     draw_set_color(c_lime)

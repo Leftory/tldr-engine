@@ -1,0 +1,19 @@
+{
+  "$GMPath":"",
+  "%Name":"path_field3_fig",
+  "closed":true,
+  "kind":1,
+  "name":"path_field3_fig",
+  "parent":{
+    "name":"paths",
+    "path":"folders/@Engine/paths.yy",
+  },
+  "points":[
+    {"speed":100.0,"x":480.0,"y":140.0,},
+    {"speed":100.0,"x":480.0,"y":140.0,},
+    {"speed":100.0,"x":600.0,"y":140.0,},
+  ],
+  "precision":4,
+  "resourceType":"GMPath",
+  "resourceVersion":"2.0",
+}

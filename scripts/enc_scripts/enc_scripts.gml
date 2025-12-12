@@ -148,6 +148,17 @@ function enc_unsparepercent_enemy(target, percent, sfx = snd_ominous) {
 	}
 }
 
+function enc_tire_enemy(target)
+{
+    if enc_enemy_count() >= target+1 and enc_enemy_isfighting(target)
+    {
+        o_enc.encounter_data.enemies[target].tired = true
+        var o = o_enc.encounter_data.enemies[target].actor_id
+        instance_create(o_text_hpchange, o.x, o.y - o.myheight/2, o.depth - 100, {draw: "tired", mode: 4})
+	
+    }
+}
+
 ///@arg slot
 function enc_sparepercent_enemy_from_inst(target, instance, variable, sfx = snd_mercyadd){
 	var percent = variable_instance_get(instance, variable)

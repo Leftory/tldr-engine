@@ -7,3 +7,9 @@ if !is_undefined(idle_path) && idle_path_autodir && !encounter_started && !is_in
 }
 
 xprev_real = x
+
+
+if instance_exists(o_enc) and o_enc.battle_state == "turn"
+{
+    dlg = 0
+}

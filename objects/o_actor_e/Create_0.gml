@@ -34,3 +34,5 @@ __start_chasing = function() {
 xprev_real = 0
 
 has_aura = true
+
+dlg = 0

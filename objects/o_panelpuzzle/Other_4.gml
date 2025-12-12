@@ -1,0 +1,1 @@
+won = state_get("panelpuzzle",id)

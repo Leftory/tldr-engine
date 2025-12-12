@@ -9,7 +9,10 @@ if is_struct(item_inside) && is_instanceof(item_inside, item) {
     
     var txt = string(loc("item_chest_get"), item_get_name(item_inside)) + "{p}{c}"
     txt += item_add(item_inside)
-    dialogue_start(txt)
+    cutscene_create()
+    cutscene_dialogue(txt)
+    cutscene_func(additional_code)
+    cutscene_play()
 }
 else {
     empty_callback()

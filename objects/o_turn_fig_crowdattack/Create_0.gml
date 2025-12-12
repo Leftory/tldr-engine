@@ -1,4 +1,9 @@
 event_inherited()
 
-_ex_bullet = noone
 timer_end = undefined
+
+alarm_buffer = 0
+
+inst = noone
+
+am_support = false

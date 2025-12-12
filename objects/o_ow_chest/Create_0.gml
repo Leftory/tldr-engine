@@ -5,3 +5,5 @@ empty_callback = function() {
     
     dialogue_start(loc("item_chest_empty"))
 }
+
+additional_code = function(){}

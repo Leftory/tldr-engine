@@ -881,7 +881,7 @@ if battle_state == "exec" {
     				})
     				waiting = true
     			}
-    			else if exec_current[0] == CHAR_STATE.ACT && can_act[user] { // act
+    			else if exec_current[0] == CHAR_STATE.ACT { // act
     				if enc_enemy_isfighting(fightselection[user]) {
     					var act_execer = encounter_data.enemies[fightselection[user]].acts[actselection[user]].exec
     					
@@ -922,7 +922,7 @@ if battle_state == "exec" {
     						script_execute(act_execer, encounter_data.enemies[fightselection[user]].slot, user)
     				}
     			}
-    			else if exec_current[0] == CHAR_STATE.ACT && !can_act[user] { // special act
+    			else if exec_current[0] == CHAR_STATE.POWER { // special act
     				if enc_enemy_isfighting(partyactselection[user]) {
     					var act_execer = encounter_data.enemies[partyactselection[user]].acts_special
     					var __default_action = 0

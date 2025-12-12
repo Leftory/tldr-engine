@@ -1,0 +1,1 @@
+if won state_add("panelpuzzle",id)

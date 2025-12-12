@@ -24,6 +24,8 @@ function enemy() constructor {
     
     unspare = 0
     
+    dlg = 0
+    
 	// acts
 	acts = [
 		{
@@ -55,7 +57,10 @@ function enemy() constructor {
 	ev_dialogue =	    -1
 	ev_turn =	  	    -1
     ev_turn_start =     -1
-	ev_post_turn =	    -1
+	ev_post_turn =	    function(){
+        dlg = 0
+        o_enc.current_turn ++
+    }
     ev_win =            -1
 	
 	//recruit
@@ -391,7 +396,7 @@ function enemy_dummy() : enemy() constructor{
 	
 	
 	// recruit
-    //recruit = new enemy_recruit_virovirokun()
+    recruit = noone
 		
 	// text
 	dialogue = function(slot) {
@@ -417,7 +422,7 @@ function enemy_fig() : enemy() constructor{
 	status_effect = ""
     freezable = true
     
-    mercy = 100
+    mercy = 0
     
     turn_object = o_turn_fig_crowdattack
 	
@@ -427,8 +432,14 @@ function enemy_fig() : enemy() constructor{
 			name: loc("enc_act_check"),
 			party: [],
 			desc: "Useless analysis",
-			exec: function() {
-				encounter_scene_dialogue("* FIG - 1 ATK 1 DEF{br}{resetx}* They blend into crowds very easily. They're very insecure about this.")
+			exec: function(slot,user) {
+				if o_enc.encounter_data.enemies[slot].unspare < 100
+                {
+                    encounter_scene_dialogue($"* FIG - {o_enc.encounter_data.enemies[slot].attack} ATK {o_enc.encounter_data.enemies[slot].defense} DEF {o_enc.encounter_data.enemies[slot].max_hp}"+" HP{br}{resetx}* They blend into crowds very easily and are very insecure.")
+                }
+                else {
+                	encounter_scene_dialogue($"* FIG - {o_enc.encounter_data.enemies[slot].attack} ATK {o_enc.encounter_data.enemies[slot].defense} DEF {o_enc.encounter_data.enemies[slot].max_hp}"+" HP{br}{resetx}* You made fun of their insecurity. Are you happy?")
+                }
 			}
 		},
 		{
@@ -436,7 +447,7 @@ function enemy_fig() : enemy() constructor{
 			party: [],
 			desc: "Gives MERCY",
 			tp_cost: 0,
-			exec: function(slot, user) {
+			exec: method(self, function(slot, user) {
 				cutscene_create()
 				cutscene_set_variable(o_enc, "waiting", true)
 				cutscene_dialogue(array_shuffle([
@@ -445,46 +456,122 @@ function enemy_fig() : enemy() constructor{
                 "* You told Fig they're irreplaceable."
             ])[0])
                 
-                cutscene_func(function(slot, user){
+                cutscene_func(method(self,function(slot, user){
                     if o_enc.encounter_data.enemies[slot].unspare < 100
                     {
+                        if o_enc.encounter_data.enemies[slot].mercy < 100 {
                         enc_sparepercent_enemy(slot, 100)
                         cutscene_create()
                         cutscene_dialogue("* They were flattered!")
                         cutscene_set_variable(o_enc, "waiting", false)
+                        o_enc.encounter_data.enemies[slot].dlg = 1
                         cutscene_play()
+                        }
+                        else {
+                        	cutscene_create()
+                        cutscene_dialogue("* They found it a bit insincere, but they'll still allow you to SPARE them.")
+                        cutscene_set_variable(o_enc, "waiting", false)
+                        o_enc.encounter_data.enemies[slot].dlg = 2
+                        cutscene_play()
+                        }
                     }
                     else {
                     	cutscene_create()
-                        o_enc.encounter_data.enemies[slot].attack ++
-                        cutscene_dialogue("* ... but they found it insincere!{br}{resetx}Their ATTACK went up!")
+                        cutscene_func(function(slot,user){
+                            if o_enc.encounter_data.enemies[slot].attack < 4
+                            {
+                                cutscene_create()
+                                o_enc.encounter_data.enemies[slot].attack ++
+                        cutscene_dialogue("* ... but they found it insincere!{br}{resetx}* Their ATTACK went up!")
                         cutscene_set_variable(o_enc, "waiting", false)
+                        o_enc.encounter_data.enemies[slot].dlg = 5
+                                cutscene_play()
+                            }
+                            else if o_enc.encounter_data.enemies[slot].attack = 4 {
+                            	cutscene_create()
+                                o_enc.encounter_data.enemies[slot].attack ++
+                        cutscene_dialogue("* ... but they found it insincere!{br}{resetx}* Their ATTACK went up!")
+                        cutscene_set_variable(o_enc, "waiting", false)
+                        o_enc.encounter_data.enemies[slot].dlg = 7
+                                cutscene_play()
+                            }
+                            else if o_enc.encounter_data.enemies[slot].attack > 4 {
+                            	cutscene_create()
+                        cutscene_dialogue("* ... but they don't even care anymore!")
+                        cutscene_set_variable(o_enc, "waiting", false)
+                        o_enc.encounter_data.enemies[slot].dlg = 6
+                                cutscene_play()
+                            }
+                        },[slot,user])
                         cutscene_play()
                     }
-                }, [slot, user])
+                }), [slot, user]) 
 				cutscene_play()
-			}
+			})
 		},
         {
 			name: "Mock",
 			party: [],
-			desc: "Becomes UNSPAREABLE",
+			desc: "Gives UNSPARE",
 			tp_cost: 0,
 			exec: function(slot, user) {
 				cutscene_create()
-				cutscene_set_variable(o_enc, "waiting", true)
-				
-				cutscene_dialogue(array_shuffle([
+                var txt_c = ""
+                
+                cutscene_func(function(){
+                    if irandom_range(1,10) > 1
+                    {
+                        cutscene_create()
+                        cutscene_dialogue(array_shuffle([
                 "* You told Fig you can't tell them apart from the crowd.",
                 "* You told Fig they're the opposite of unique.",
                 "* You told Fig they're replaceable."
             ])[0])
+                        cutscene_play()
+                    }
+                    else {
+                    	cutscene_create()
+                        cutscene_dialogue("* You told Fig they're a freak, and you don't have time for freaks.")
+                        cutscene_play()
+                    }
+                })
+				cutscene_set_variable(o_enc, "waiting", true)
+                cutscene_sleep(2)
+                cutscene_wait_dialogue_finish()
+                cutscene_func(function(slot, user){
+                    if o_enc.encounter_data.enemies[slot].unspare < 100
+                    {
+                        if o_enc.encounter_data.enemies[slot].mercy < 100 {
+                            cutscene_create()
+                            cutscene_func(enc_unsparepercent_enemy, [slot, 100])
                 
-                cutscene_func(enc_unsparepercent_enemy, [slot, 100])
+                        cutscene_dialogue("* They were angered!{br}{resetx}* They are now UNSPAREABLE!")
                 
-                cutscene_dialogue("* They were angered!")
+                        o_enc.encounter_data.enemies[slot].dlg = 3
+				
+				        cutscene_set_variable(o_enc, "waiting", false)
+                        cutscene_play()
+                        }
+                        else {
+                        	cutscene_create()
+                        cutscene_func(enc_unsparepercent_enemy, [slot, 100])
+                
+                cutscene_dialogue("* They felt betrayed!{br}{resetx}* They are now UNSPAREABLE!")
+                
+                o_enc.encounter_data.enemies[slot].dlg = 4
 				
 				cutscene_set_variable(o_enc, "waiting", false)
+                        cutscene_play()
+                        }
+                    }
+                    else {
+                    	cutscene_create()
+                        cutscene_dialogue("* ... but they already hate your guts.")
+                        cutscene_set_variable(o_enc, "waiting", false)
+                        o_enc.encounter_data.enemies[slot].dlg = 6
+                        cutscene_play()
+                    }
+                }, [slot, user])
 				cutscene_play()
 			}
 		},
@@ -492,16 +579,258 @@ function enemy_fig() : enemy() constructor{
 	
 	
 	// recruit
-    //recruit = new enemy_recruit_virovirokun()
-		
-	// text
+    recruit = new enemy_recruit_fig()
+    
+	// dialogue
 	dialogue = function(slot) {
-		if self.mercy >= 100 
+		if dlg = 0  // idle
 			return array_shuffle([
-                "Hey, I can be spared."
+            "I stand out!{br}I stand out!",
+            "I'm not like other guys!",
+            "I'm nothing{br}like you all!"
             ])[0]
-		return array_shuffle([
-            "Hey, I'm Fig."
-        ])[0]
+        if dlg = 1 // compliment
+            return array_shuffle([
+            "Thanks! I think I really needed to hear that."
+            ])[0]
+        if dlg = 2 // compliment more than once
+            return array_shuffle([
+            "Uh... I don't know, man."
+            ])[0]
+        if dlg = 3 // mock
+            return array_shuffle([
+            "You...!"
+            ])[0]
+        if dlg = 4 // mock after compliment
+            return array_shuffle([
+            "I feel so betrayed!"
+            ])[0]
+        if dlg = 5 // compliment after mock
+            return array_shuffle([
+            "Like THAT'd work on me."
+            ])[0]
+        if dlg = 6 // mock more than once
+            return array_shuffle([
+            "I don't even care anymore."
+            ])[0]
+		if dlg = 7 // attack = 5
+            return array_shuffle([
+            "ULTIMATE ATTACK!"
+            ])[0]
+	}
+}
+
+function enemy_bookworm() : enemy() constructor{
+	name = "Bookworm"
+	obj = o_actor_e_bookworm
+	
+	// stats
+	hp =		60
+	max_hp =	60
+	attack =	1
+	defense =	2
+	status_effect = ""
+    freezable = true
+    
+    mercy = 0
+    
+    turn_object = o_turn_bookworm_lines
+	
+	// acts
+	acts = [
+		{
+			name: loc("enc_act_check"),
+			party: [],
+			desc: "Useless analysis",
+			exec: function(slot,user) {
+				if o_enc.encounter_data.enemies[slot].unspare < 100
+                {
+                    encounter_scene_dialogue($"* BOOKWORM - {o_enc.encounter_data.enemies[slot].attack} ATK {o_enc.encounter_data.enemies[slot].defense} DEF {o_enc.encounter_data.enemies[slot].max_hp}"+" HP{br}{resetx}* Loves studying, hates cheaters.")
+                }
+                else {
+                	encounter_scene_dialogue($"* BOOKWORM - {o_enc.encounter_data.enemies[slot].attack} ATK {o_enc.encounter_data.enemies[slot].defense} DEF {o_enc.encounter_data.enemies[slot].max_hp}"+" HP{br}{resetx}* Loves studying, hates you.")
+                }
+			}
+		},
+		{
+			name: "Study",
+			party: [],
+			desc: "Gives MERCY",
+			tp_cost: 0,
+			exec: method(self, function(slot, user) {
+				cutscene_create()
+				cutscene_set_variable(o_enc, "waiting", true)
+				cutscene_dialogue(array_shuffle([
+                "* You studied hard with Bookworm.",
+                "* You reviewed some subjects with Bookworm."
+            ])[0])
+                
+                cutscene_func(method(self,function(slot, user){
+                    if o_enc.encounter_data.enemies[slot].unspare < 100
+                    {
+                        if o_enc.encounter_data.enemies[slot].mercy < 100 {
+                        enc_sparepercent_enemy(slot, 100)
+                            switch(slot)
+                            {
+                                case 0:
+                                {
+                                    enc_tire_enemy(1)
+                                    enc_tire_enemy(2)
+                                    break
+                                }
+                                    case 1:
+                                    {
+                                        enc_tire_enemy(0)
+                                        enc_tire_enemy(2)
+                                        break
+                                }
+                                        case 2:
+                                        {
+                                            enc_tire_enemy(0)
+                                            enc_tire_enemy(1)
+                                        }
+                            }
+                        cutscene_create()
+                        cutscene_dialogue("* It was satisfied!{br}{resetx}* Everyone else became TIRED!")
+                        cutscene_set_variable(o_enc, "waiting", false)
+                        o_enc.encounter_data.enemies[slot].dlg = 1
+                        cutscene_play()
+                        }
+                        else if o_enc.encounter_data.enemies[slot].tired = false {
+                        	cutscene_create()
+                        cutscene_dialogue("* All this hard work made it TIRED!")
+                        cutscene_set_variable(o_enc, "waiting", false)
+                        o_enc.encounter_data.enemies[slot].dlg = 2
+                        cutscene_play()
+                        }
+                        else {
+                        	cutscene_create()
+                        cutscene_dialogue("* It's amazed by your hard work, and also very sleepy.")
+                        cutscene_set_variable(o_enc, "waiting", false)
+                        o_enc.encounter_data.enemies[slot].dlg = 3
+                        cutscene_play()
+                        }
+                    }
+                    else {
+                    	cutscene_create()
+                        cutscene_func(function(slot,user){
+                            cutscene_create()
+                            o_enc.encounter_data.enemies[slot].attack ++
+                            cutscene_dialogue("* ... but it knows you're a cheater!")
+                            cutscene_set_variable(o_enc, "waiting", false)
+                            o_enc.encounter_data.enemies[slot].dlg = 7
+                            cutscene_play()
+                        },[slot,user])
+                        cutscene_play()
+                    }
+                }), [slot, user]) 
+				cutscene_play()
+			})
+		},
+        {
+			name: "Cheat",
+			party: [],
+			desc: "Gives UNSPARE",
+			tp_cost: 0,
+			exec: function(slot, user) {
+				cutscene_create()
+                
+                cutscene_func(function(){
+                    if 1 = 1
+                    {
+                        cutscene_create()
+                        cutscene_dialogue(array_shuffle([
+                "* You cheated!"
+            ])[0])
+                        cutscene_play()
+                    }
+                    else {
+                    	cutscene_create()
+                        cutscene_dialogue("* You told Fig they're a freak, and you don't have time for freaks.")
+                        cutscene_play()
+                    }
+                })
+				cutscene_set_variable(o_enc, "waiting", true)
+                cutscene_sleep(2)
+                cutscene_wait_dialogue_finish()
+                cutscene_func(function(slot, user){
+                    if o_enc.encounter_data.enemies[slot].unspare < 100
+                    {
+                        if o_enc.encounter_data.enemies[slot].mercy < 100 {
+                            cutscene_create()
+                            cutscene_func(enc_unsparepercent_enemy, [slot, 100])
+                
+                        cutscene_dialogue("* Bookworm was very disappointed!{br}{resetx}* They are now UNSPAREABLE!")
+                
+                        o_enc.encounter_data.enemies[slot].dlg = 4
+				
+				        cutscene_set_variable(o_enc, "waiting", false)
+                        cutscene_play()
+                        }
+                        else {
+                        	cutscene_create()
+                        cutscene_func(enc_unsparepercent_enemy, [slot, 100])
+                
+                cutscene_dialogue("* Bookworm felt betrayed!{br}{resetx}* They are now UNSPAREABLE!")
+                
+                o_enc.encounter_data.enemies[slot].dlg = 5
+				
+				cutscene_set_variable(o_enc, "waiting", false)
+                        cutscene_play()
+                        }
+                    }
+                    else {
+                    	cutscene_create()
+                        cutscene_dialogue("* ... but Bookworm already knows you're a cheater.")
+                        cutscene_set_variable(o_enc, "waiting", false)
+                        o_enc.encounter_data.enemies[slot].dlg = 6
+                        cutscene_play()
+                    }
+                }, [slot, user])
+				cutscene_play()
+			}
+		},
+	]
+	
+	
+	// recruit
+    recruit = new enemy_recruit_bookworm()
+    
+	// dialogue
+	dialogue = function(slot) {
+		if dlg = 0  // idle
+			return array_shuffle([
+            "Bookworm loves studying.",
+            "Bookworm loves winning.",
+            "Bookworm loves success."
+            ])[0]
+        if dlg = 1 // study
+            return array_shuffle([
+            "Bookworm enjoyed studying with you."
+            ])[0]
+        if dlg = 2 // study 2
+            return array_shuffle([
+            "Bookworm is amazed by your hard work. Bookworm is getting sleepy."
+            ])[0]
+        if dlg = 3 // study 3+
+            return array_shuffle([
+            "Bookworm... sleepy..."
+            ])[0]
+        if dlg = 4 // cheat
+            return array_shuffle([
+            "Bookworm hates cheaters.\nBookworm hates you."
+            ])[0]
+        if dlg = 5 // cheat after study
+            return array_shuffle([
+            "Bookworm thought it was friends with you."
+            ])[0]
+        if dlg = 6 // cheat 2+
+            return array_shuffle([
+            "Bookworm knows you're a cheater."
+            ])[0]
+		if dlg = 7 // study after cheat
+            return array_shuffle([
+            "Bookworm knows."
+            ])[0]
 	}
 }

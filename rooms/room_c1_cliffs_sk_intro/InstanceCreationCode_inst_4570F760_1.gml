@@ -129,7 +129,9 @@ trigger_code = function(){
             "{char(sk,0)}* Erm... No! I'm not gonna fight you JUST YET...",
             "{char(sk,0)}* I've actually gotta prep. You know how it is.",
             "{char(sk,0)}* But YES, you'll see me around!",
-            "{char(sk,0)}* Alright, see ya, BAD GUYS!"
+            "{char(sk,0)}* Alright, see ya, BAD GUYS!",
+            "{char(sk,0)}* SIDEKICK, TO THE RESCUE!",
+            "{char(sk,0)}* (... Um, that's my catchphrase.)"
         ])
         cutscene_func(music_fade,[0,0,60])
         cutscene_actor_move(o_actor_sk, new actor_movement(160,0,60,,,DIR.UP),,true)

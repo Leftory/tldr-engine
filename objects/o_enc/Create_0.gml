@@ -95,6 +95,8 @@
 	turn_goingback = false
 }
 
+current_turn = 1
+
 selection = 0
 state = 0 // how deep we are in the menu
 battle_state = "menu"
@@ -197,10 +199,10 @@ __state_to_icon = function(state) {
         default: return -1
         case CHAR_STATE.FIGHT:      return 0
         case CHAR_STATE.ACT:        return 1
-        case CHAR_STATE.ITEM:       return 2
-        case CHAR_STATE.SPARE:      return 3
-        case CHAR_STATE.DEFEND:     return 4
-        case CHAR_STATE.POWER:      return 5
+        case CHAR_STATE.ITEM:       return 3
+        case CHAR_STATE.SPARE:      return 4
+        case CHAR_STATE.DEFEND:     return 5
+        case CHAR_STATE.POWER:      return 2
     }
 }
 

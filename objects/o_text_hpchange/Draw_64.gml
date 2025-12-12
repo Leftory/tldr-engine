@@ -92,6 +92,9 @@ else {
                 case "unspareable":
                     spr = spr_ui_damage_unspareable
                     break
+                case "tired":
+                    spr = spr_ui_damage_tired
+                    break
 			}
 			
 			draw_sprite_ext(spr, 0,
