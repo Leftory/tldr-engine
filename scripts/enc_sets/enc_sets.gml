@@ -102,7 +102,8 @@ function enc_set_1fig() : enc_set() constructor {
 	flavor = function(){
         if o_enc.current_turn = 1
         {
-            return "* Fig blocks the way!"
+            if global.save.PLOT <= 10 return "* Fig blocks the way!"
+                else return "* A completely different Fig blocks the way!"
         }
         if o_enc.current_turn > 1
         {
@@ -194,6 +195,18 @@ function enc_set_1fig_1bookworm() : enc_set() constructor {
                 {
                     return "* Fig and Bookworm are not having a good time."
                 }
+                else if o_enc.encounter_data.enemies[0].tired = true and o_enc.encounter_data.enemies[1].tired = false
+                {
+                    return "* Fig is feeling sleepy."
+                }
+                else if o_enc.encounter_data.enemies[1].tired = true and o_enc.encounter_data.enemies[0].tired = false
+                {
+                    return "* Bookworm is sleepy from all their hard work."
+                }
+                else if o_enc.encounter_data.enemies[0].tired = true and o_enc.encounter_data.enemies[1].tired = true
+                {
+                    return "* Everyone is feeling sleepy."
+                }
                 else if o_enc.encounter_data.enemies[0].mercy >= 100 and o_enc.encounter_data.enemies[1].mercy < 100 
                 {
                     return "* Fig is happy."
@@ -226,28 +239,57 @@ function enc_set_1fig_1bookworm() : enc_set() constructor {
                    ])[0]
                }
             }
-            else if o_enc.encounter_data.enemies[0] == new enemy_fig()
+            else if is_instanceof(o_enc.encounter_data.enemies[0], enemy_fig)
             {
-                game_end()
-            if o_enc.encounter_data.enemies[0].hp < 25
-            {
-                return "* Fig is dying."
-            } 
-            else if o_enc.encounter_data.enemies[0].mercy >= 100 
-            {
-                return "* Fig is happy."
+               if o_enc.encounter_data.enemies[0].hp < 25
+               {
+                   return "* Fig is dying."
+               } 
+                else if o_enc.encounter_data.enemies[0].tired = true
+                {
+                    return "* Fig is feeling sleepy."
+                }
+               else if o_enc.encounter_data.enemies[0].mercy >= 100 
+               {
+                   return "* Fig is happy."
+               }
+               else if o_enc.encounter_data.enemies[0].unspare >= 100 
+               {
+              	    return "* Fig is angry."
+               }
+               else
+               {
+              	    return array_shuffle([
+                      "* Fig is trying their hardest not to blend in.",
+                      "* Smells like a crowd."
+                  ])[0]
+               }
             }
-            else if o_enc.encounter_data.enemies[0].unspare >= 100 
+            else if is_instanceof(o_enc.encounter_data.enemies[0], enemy_bookworm)
             {
-           	    return "* Fig is angry."
-            }
-            else
-            {
-           	    return array_shuffle([
-                   "* Fig is trying their hardest not to blend in.",
-                   "* Smells like a crowd."
-               ])[0]
-            }
+               if o_enc.encounter_data.enemies[0].hp < 15
+               {
+                   return "* Bookworm is trying to study under pressure."
+                } 
+                else if o_enc.encounter_data.enemies[0].tired = true
+                {
+                    return "* Bookworm is sleepy from all their hard work."
+                }
+               else if o_enc.encounter_data.enemies[0].mercy >= 100 
+               {
+                   return "* Bookworm is getting good grades."
+               }
+               else if o_enc.encounter_data.enemies[0].unspare >= 100 
+               {
+              	    return "* Bookworm can't forgive a cheater."
+               }
+               else
+               {
+              	    return array_shuffle([
+                      "* Bookworm can't do anything but study.",
+                      "* Smells like nerds."
+                  ])[0]
+               }
             }
         }
     }

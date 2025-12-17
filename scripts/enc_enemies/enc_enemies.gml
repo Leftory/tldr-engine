@@ -424,7 +424,7 @@ function enemy_fig() : enemy() constructor{
     
     mercy = 0
     
-    turn_object = o_turn_fig_crowdattack
+    turn_object = [o_turn_fig_crowdattack,o_turn_fig_stomp]
 	
 	// acts
 	acts = [
@@ -617,6 +617,8 @@ function enemy_fig() : enemy() constructor{
             return array_shuffle([
             "ULTIMATE ATTACK!"
             ])[0]
+        if dlg = 0 and tired = true
+            return "(Yawn)..."
 	}
 }
 
@@ -634,7 +636,10 @@ function enemy_bookworm() : enemy() constructor{
     
     mercy = 0
     
-    turn_object = o_turn_bookworm_lines
+    turn_object = function(){
+        if enc_enemy_count(true) > 1 return o_turn_bookworm_lines
+            else return o_turn_bookworm_dropbooks
+    }
 	
 	// acts
 	acts = [
@@ -818,7 +823,7 @@ function enemy_bookworm() : enemy() constructor{
             ])[0]
         if dlg = 4 // cheat
             return array_shuffle([
-            "Bookworm hates cheaters.\nBookworm hates you."
+            "Bookworm hates cheaters.{br}Bookworm hates you."
             ])[0]
         if dlg = 5 // cheat after study
             return array_shuffle([
@@ -832,5 +837,7 @@ function enemy_bookworm() : enemy() constructor{
             return array_shuffle([
             "Bookworm knows."
             ])[0]
+        if dlg != 3 and tired = true
+            return "Bookworm... very sleepy..."
 	}
 }

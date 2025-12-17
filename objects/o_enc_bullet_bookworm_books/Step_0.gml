@@ -1,0 +1,1 @@
+if falling_book = 0 x = o_enc_bullet_bookworm_big.x

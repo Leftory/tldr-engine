@@ -7,4 +7,5 @@ else {
 	alarm[1] = 1
 }
 
-alarm[1] = random_range(5,45)
+if enc_enemy_count(true) = 1 alarm[1] = random_range(5,45)
+    else alarm[1] = random_range(10,90)

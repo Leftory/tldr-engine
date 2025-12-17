@@ -1191,11 +1191,20 @@ if battle_state == "dialogue" {
     				continue
     			
     			// create turn objects feed the information to them
-    			array_set(turn_objects, i, instance_create(encounter_data.enemies[i].turn_object,,,, {
+    			if is_array(encounter_data.enemies[i].turn_object)
+                {
+                array_set(turn_objects, i, instance_create(encounter_data.enemies[i].turn_object[irandom_range(0,array_length(encounter_data.enemies[i].turn_object)-1)],,,, {
     				enemy_index: i, 
     				enemy_struct: encounter_data.enemies[i]
     			}))
-    			
+                }
+                else {
+                	array_set(turn_objects, i, instance_create(encounter_data.enemies[i].turn_object,,,, {
+    				enemy_index: i, 
+    				enemy_struct: encounter_data.enemies[i]
+                }))
+                }
+                    
     			var xx = encounter_data.enemies[i].actor_id.x - guipos_x()
     			var yy = encounter_data.enemies[i].actor_id.y - guipos_y()
     			

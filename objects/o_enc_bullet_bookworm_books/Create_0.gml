@@ -5,9 +5,10 @@ inv = ENC_SETUP_SOUL_INV
 destroy = true
 element = ""
 
-inside = true
+inside = false
 alarm[0] = 1
 
-jump = 0
-jump_buffer = 0
-jump_timer = 0
+falling_book = 0
+
+image_xscale = random_range(0.75,1.25)
+
